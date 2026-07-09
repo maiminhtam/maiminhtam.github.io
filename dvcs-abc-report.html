@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DVCS – ABC | Monthly Reports</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0a1628;
+    --navy-light: #132240;
+    --navy-mid: #1a3160;
+    --blue: #2563eb;
+    --blue-light: #3b82f6;
+    --blue-accent: #60a5fa;
+    --blue-pale: #dbeafe;
+    --blue-wash: #eff6ff;
+    --white: #ffffff;
+    --gray-50: #f8fafc;
+    --gray-100: #f1f5f9;
+    --gray-200: #e2e8f0;
+    --gray-300: #cbd5e1;
+    --gray-400: #94a3b8;
+    --gray-500: #64748b;
+    --gray-600: #475569;
+    --gray-700: #334155;
+    --gray-800: #1e293b;
+    --green: #16a34a;
+    --red: #dc2626;
+    --orange: #d97706;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'Space Mono', monospace;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow-sm: 0 1px 3px rgba(10,22,40,0.06);
+    --shadow-md: 0 4px 16px rgba(10,22,40,0.08);
+    --shadow-lg: 0 8px 32px rgba(10,22,40,0.12);
+    --shadow-xl: 0 16px 48px rgba(10,22,40,0.16);
+    --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--gray-50);
+    color: var(--gray-800);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    background: var(--navy);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .header-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 40px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .header-logo {
+    width: 36px;
+    height: 36px;
+    background: var(--blue);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: white;
+    font-size: 14px;
+    letter-spacing: -0.5px;
+  }
+  .header-title {
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+  }
+  .header-title span {
+    color: var(--gray-400);
+    font-weight: 400;
+    margin: 0 6px;
+  }
+  .header-subtitle {
+    color: var(--gray-400);
+    font-size: 13px;
+    font-weight: 400;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 60%, var(--navy-mid) 100%);
+    padding: 80px 40px 72px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -200px;
+    right: -100px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(37,99,235,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -100px;
+    left: -50px;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(96,165,250,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--blue-accent);
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-size: 48px;
+    font-weight: 700;
+    color: white;
+    letter-spacing: -1.5px;
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+  .hero h1 em {
+    font-style: normal;
+    color: var(--blue-accent);
+  }
+  .hero p {
+    font-size: 17px;
+    color: var(--gray-400);
+    max-width: 520px;
+    line-height: 1.6;
+  }
+
+  /* ── MAIN CONTENT ── */
+  .main {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 48px 40px 80px;
+  }
+
+  /* ── YEAR SECTION ── */
+  .year-section {
+    margin-bottom: 56px;
+  }
+  .year-header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .year-label {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: -1px;
+  }
+  .year-badge {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    background: var(--blue-pale);
+    color: var(--blue);
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── MONTH GRID ── */
+  .month-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .month-card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    cursor: pointer;
+    transition: all var(--transition);
+    position: relative;
+    overflow: hidden;
+  }
+  .month-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--blue);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--transition);
+  }
+  .month-card:hover::before,
+  .month-card.has-data:hover::before {
+    transform: scaleX(1);
+  }
+  .month-card.has-data {
+    border-color: var(--gray-200);
+    box-shadow: var(--shadow-sm);
+  }
+  .month-card.has-data:hover {
+    border-color: var(--blue-light);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+  .month-card.empty {
+    opacity: 0.45;
+    cursor: default;
+    background: var(--gray-50);
+  }
+  .month-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: 4px;
+  }
+  .month-meta {
+    font-size: 12px;
+    color: var(--gray-400);
+  }
+  .month-card.has-data .month-meta {
+    color: var(--gray-500);
+  }
+  .month-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--green);
+    margin-top: 8px;
+  }
+  .month-status .dot {
+    width: 6px;
+    height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+  }
+
+  /* ── SLIDE VIEWER OVERLAY ── */
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(10,22,40,0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    animation: fadeIn 0.2s ease;
+  }
+  .overlay.active { display: flex; align-items: center; justify-content: center; }
+
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(24px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+  .viewer {
+    width: 98vw;
+    max-width: 1440px;
+    height: 94vh;
+    background: var(--white);
+    border-radius: 16px;
+    box-shadow: var(--shadow-xl);
+    display: flex;
+    flex-direction: column;
+    animation: slideUp 0.3s ease;
+    overflow: hidden;
+  }
+
+  .viewer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--gray-200);
+    background: var(--gray-50);
+    flex-shrink: 0;
+  }
+  .viewer-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--navy);
+  }
+  .viewer-title span {
+    color: var(--gray-400);
+    font-weight: 400;
+  }
+  .viewer-close {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--gray-200);
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: var(--gray-500);
+    transition: all var(--transition);
+  }
+  .viewer-close:hover {
+    border-color: var(--gray-300);
+    color: var(--gray-800);
+    background: var(--gray-100);
+  }
+
+  .viewer-body {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+  }
+
+  /* ── SLIDE NAV ── */
+  .slide-nav {
+    width: 220px;
+    border-right: 1px solid var(--gray-200);
+    background: var(--gray-50);
+    overflow-y: auto;
+    flex-shrink: 0;
+    padding: 12px;
+    transition: width var(--transition), padding var(--transition), opacity var(--transition);
+  }
+  .slide-nav.collapsed {
+    width: 0;
+    padding: 12px 0;
+    overflow: hidden;
+    border-right: none;
+    opacity: 0;
+  }
+  .nav-toggle {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--gray-200);
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gray-500);
+    transition: all var(--transition);
+    flex-shrink: 0;
+    margin-right: 10px;
+  }
+  .nav-toggle:hover {
+    border-color: var(--blue);
+    color: var(--blue);
+    background: var(--blue-wash);
+  }
+  .nav-toggle svg {
+    width: 18px;
+    height: 18px;
+    transition: transform var(--transition);
+  }
+  .nav-toggle.collapsed svg {
+    transform: rotate(180deg);
+  }
+  .slide-nav-item {
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition);
+    margin-bottom: 2px;
+    font-size: 13px;
+    color: var(--gray-600);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .slide-nav-item:hover {
+    background: var(--gray-100);
+    color: var(--gray-800);
+  }
+  .slide-nav-item.active {
+    background: var(--blue);
+    color: white;
+  }
+  .slide-nav-num {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    background: rgba(0,0,0,0.06);
+    flex-shrink: 0;
+  }
+  .slide-nav-item.active .slide-nav-num {
+    background: rgba(255,255,255,0.2);
+  }
+
+  /* ── SLIDE CONTENT AREA ── */
+  .slide-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0;
+  }
+
+  /* ── SLIDES ── */
+  .slide {
+    display: none;
+    min-height: 100%;
+  }
+  .slide.active { display: block; }
+
+  /* Slide 1: Title + Agenda */
+  .slide-title-agenda {
+    display: flex;
+    min-height: calc(94vh - 64px - 49px);
+  }
+  .title-left {
+    width: 42%;
+    background: var(--navy);
+    padding: 60px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .title-left::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--blue);
+  }
+  .title-left::after {
+    content: '';
+    position: absolute;
+    bottom: -80px;
+    right: -80px;
+    width: 250px;
+    height: 250px;
+    background: radial-gradient(circle, rgba(37,99,235,0.15) 0%, transparent 70%);
+  }
+  .title-main {
+    font-size: 36px;
+    font-weight: 700;
+    color: white;
+    letter-spacing: -1px;
+    line-height: 1.15;
+    margin-bottom: 12px;
+  }
+  .title-date {
+    font-size: 20px;
+    color: var(--gray-400);
+    font-weight: 400;
+  }
+  .title-right {
+    width: 58%;
+    padding: 60px 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .agenda-heading {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 28px;
+    letter-spacing: -0.5px;
+  }
+  .agenda-item {
+    margin-bottom: 20px;
+  }
+  .agenda-item-title {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: 4px;
+  }
+  .agenda-num {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--blue);
+    min-width: 20px;
+  }
+  .agenda-sub {
+    padding-left: 30px;
+    font-size: 13px;
+    color: var(--gray-500);
+    line-height: 1.7;
+  }
+
+  /* Content slides shared */
+  .slide-page {
+    padding: 40px 44px;
+  }
+  .slide-page-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    position: relative;
+    padding-bottom: 16px;
+  }
+  .slide-page-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 48px;
+    height: 3px;
+    background: var(--blue);
+    border-radius: 2px;
+  }
+  .slide-page-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: -0.5px;
+  }
+  .slide-section-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--gray-400);
+  }
+
+  /* ── PROJECT CARDS ── */
+  .card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .project-card {
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: white;
+  }
+  .card-header {
+    background: var(--navy);
+    padding: 12px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    color: white;
+    letter-spacing: -0.2px;
+  }
+  .card-body {
+    padding: 18px;
+  }
+  .card-section {
+    margin-bottom: 14px;
+  }
+  .card-section:last-child {
+    margin-bottom: 0;
+  }
+  .card-section-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--blue);
+    margin-bottom: 6px;
+  }
+  .card-section-label.risk {
+    color: var(--orange);
+  }
+  .card-section-label.target {
+    color: var(--blue);
+  }
+  .card-bullets {
+    list-style: none;
+    padding: 0;
+  }
+  .card-bullets li {
+    font-size: 12.5px;
+    color: var(--gray-700);
+    line-height: 1.55;
+    padding-left: 14px;
+    position: relative;
+    margin-bottom: 4px;
+  }
+  .card-bullets li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 7px;
+    width: 4px;
+    height: 4px;
+    background: var(--blue-light);
+    border-radius: 50%;
+  }
+  .target-date {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--blue);
+  }
+
+  /* ── RELEASE CARDS ── */
+  .release-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .release-card {
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: white;
+  }
+  .release-header {
+    background: var(--navy);
+    padding: 12px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    color: white;
+  }
+  .release-body {
+    padding: 18px;
+  }
+  .release-group {
+    margin-bottom: 16px;
+  }
+  .release-group:last-child {
+    margin-bottom: 0;
+  }
+  .release-group-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--blue);
+    margin-bottom: 6px;
+  }
+  .release-body .card-bullets li::before {
+    background: var(--gray-400);
+  }
+
+  /* ── RESOURCES TABLE ── */
+  .resources-table-wrap {
+    overflow-x: auto;
+  }
+  .resources-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 12.5px;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .resources-table thead th {
+    background: var(--navy);
+    color: white;
+    padding: 11px 14px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    border: none;
+  }
+  .resources-table thead th:first-child {
+    width: 44px;
+    text-align: center;
+  }
+  .resources-table tbody td {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--gray-100);
+    color: var(--gray-700);
+    vertical-align: top;
+  }
+  .resources-table tbody td:first-child {
+    text-align: center;
+    color: var(--gray-400);
+    font-family: var(--font-mono);
+    font-size: 11px;
+  }
+  .resources-table tbody tr:nth-child(even) td {
+    background: var(--gray-50);
+  }
+  .resources-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+  .status-green { color: var(--green); font-weight: 500; }
+  .status-blue { color: var(--blue); font-weight: 500; }
+  .status-red { color: var(--red); font-weight: 600; }
+  .status-orange { color: var(--orange); font-weight: 500; }
+
+  /* ── PROPOSAL ── */
+  .proposal-subtitle {
+    font-size: 16px;
+    color: var(--blue);
+    font-weight: 500;
+    margin-bottom: 20px;
+  }
+  .proposal-box {
+    background: var(--blue-wash);
+    border: 1px solid var(--blue-pale);
+    border-radius: var(--radius);
+    padding: 28px 32px;
+    font-size: 14px;
+    line-height: 1.75;
+    color: var(--gray-700);
+  }
+  .proposal-box strong {
+    color: var(--gray-800);
+  }
+
+  /* ── CLOSING SLIDE ── */
+  .slide-closing {
+    min-height: calc(94vh - 64px - 49px);
+    background: var(--navy);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  .slide-closing::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--blue);
+  }
+  .slide-closing::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(37,99,235,0.1) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .closing-content {
+    position: relative;
+    z-index: 1;
+  }
+  .closing-thanks {
+    font-size: 48px;
+    font-weight: 700;
+    color: white;
+    letter-spacing: -1.5px;
+    margin-bottom: 12px;
+  }
+  .closing-sub {
+    font-size: 16px;
+    color: var(--gray-400);
+    margin-bottom: 8px;
+  }
+  .closing-italic {
+    font-size: 15px;
+    color: var(--gray-500);
+    font-style: italic;
+    margin-bottom: 32px;
+  }
+  .closing-footer {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--gray-500);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* ── SLIDE NAV ARROWS ── */
+  .viewer-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 24px;
+    border-top: 1px solid var(--gray-200);
+    background: var(--gray-50);
+    flex-shrink: 0;
+  }
+  .nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 18px;
+    border: 1px solid var(--gray-200);
+    background: white;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--gray-600);
+    cursor: pointer;
+    transition: all var(--transition);
+    font-family: var(--font-body);
+  }
+  .nav-btn:hover {
+    border-color: var(--blue);
+    color: var(--blue);
+    background: var(--blue-wash);
+  }
+  .nav-btn:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+  .nav-btn:disabled:hover {
+    border-color: var(--gray-200);
+    color: var(--gray-600);
+    background: white;
+  }
+  .slide-counter {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--gray-400);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .hero { padding: 48px 20px 40px; }
+    .hero h1 { font-size: 32px; }
+    .main { padding: 32px 20px; }
+    .month-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .header-inner { padding: 0 20px; }
+    .slide-nav { width: 180px; }
+    .slide-title-agenda { flex-direction: column; }
+    .title-left, .title-right { width: 100%; }
+    .card-grid, .release-grid { grid-template-columns: 1fr; }
+    .slide-page { padding: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-brand">
+      <div class="header-logo">AB</div>
+      <div>
+        <div class="header-title">DVCS <span>×</span> ABC</div>
+      </div>
+    </div>
+    <div class="header-subtitle">Monthly Reports Portal</div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-label">Monthly Status Reports</div>
+    <h1>DVCS <em>–</em> ABC</h1>
+    <p>Monthly project updates, releases, and team status from ABC to Yara DVCS.</p>
+  </div>
+</section>
+
+<!-- MAIN -->
+<main class="main" id="app">
+
+  <!-- 2026 Section -->
+  <section class="year-section">
+    <div class="year-header">
+      <div class="year-label">2026</div>
+      <div class="year-badge">CURRENT</div>
+    </div>
+    <div class="month-grid" id="grid-2026"></div>
+  </section>
+
+</main>
+
+<!-- SLIDE VIEWER OVERLAY -->
+<div class="overlay" id="overlay">
+  <div class="viewer">
+    <div class="viewer-header">
+      <div style="display:flex;align-items:center;">
+        <button class="nav-toggle" id="btn-toggle-nav" title="Toggle slide navigation">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+        </button>
+        <div class="viewer-title" id="viewer-title">DVCS – ABC <span>| April 2026</span></div>
+      </div>
+      <button class="viewer-close" id="btn-close">✕</button>
+    </div>
+    <div class="viewer-body">
+      <nav class="slide-nav" id="slide-nav"></nav>
+      <div class="slide-content" id="slide-content"></div>
+    </div>
+    <div class="viewer-footer">
+      <button class="nav-btn" id="btn-prev">← Previous</button>
+      <span class="slide-counter" id="slide-counter">1 / 7</span>
+      <button class="nav-btn" id="btn-next">Next →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DATA ──
+const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+const reports = {
+  '2026': {
+    7: { // July
+      title: 'DVCS – ABC',
+      date: 'July 2026',
+      file: 'dvcs-abc-2026-07-july.html'
+    },
+    5: { // May
+      title: 'DVCS – ABC',
+      date: 'May 2026',
+      file: 'dvcs-abc-2026-05-may.html'
+    },
+    4: { // April
+      title: 'DVCS – ABC',
+      date: 'April 2026',
+      slides: [
+        {
+          name: 'Title & Agenda',
+          type: 'title-agenda'
+        },
+        {
+          name: 'Current Status',
+          type: 'status'
+        },
+        {
+          name: 'Releases',
+          type: 'releases'
+        },
+        {
+          name: 'Resources (1/2)',
+          type: 'resources-1'
+        },
+        {
+          name: 'Resources (2/2)',
+          type: 'resources-2'
+        },
+        {
+          name: 'Proposal',
+          type: 'proposal'
+        },
+        {
+          name: 'Closing',
+          type: 'closing'
+        }
+      ]
+    }
+  }
+};
+
+// ── RENDER MONTH GRIDS ──
+function renderGrids() {
+  Object.keys(reports).sort((a,b) => b - a).forEach(year => {
+    const grid = document.getElementById(`grid-${year}`);
+    if (!grid) return;
+    grid.innerHTML = '';
+    for (let m = 1; m <= 12; m++) {
+      const hasData = reports[year] && reports[year][m];
+      const card = document.createElement('div');
+      card.className = `month-card ${hasData ? 'has-data' : 'empty'}`;
+      card.innerHTML = `
+        <div class="month-name">${months[m-1]}</div>
+        <div class="month-meta">${hasData ? 'Report available' : 'No report'}</div>
+        ${hasData ? '<div class="month-status"><span class="dot"></span> Published</div>' : ''}
+      `;
+      if (hasData) {
+        const report = reports[year][m];
+        if (report.file) {
+          card.addEventListener('click', () => { window.location.href = report.file; });
+        } else {
+          card.addEventListener('click', () => openViewer(year, m));
+        }
+      }
+      grid.appendChild(card);
+    }
+  });
+}
+
+// ── SLIDE HTML GENERATORS ──
+function getSlideHTML(type) {
+  switch(type) {
+    case 'title-agenda': return `
+      <div class="slide-title-agenda">
+        <div class="title-left">
+          <div class="title-main">DVCS – ABC</div>
+          <div class="title-date">April 2026</div>
+        </div>
+        <div class="title-right">
+          <div class="agenda-heading">Agenda</div>
+          <div class="agenda-item">
+            <div class="agenda-item-title"><span class="agenda-num">1.</span> Projects</div>
+            <div class="agenda-sub">– Current Status Overview<br>– Scope in Progress</div>
+          </div>
+          <div class="agenda-item">
+            <div class="agenda-item-title"><span class="agenda-num">2.</span> Releases</div>
+            <div class="agenda-sub">– Released Last Month<br>– Planned for Next Month</div>
+          </div>
+          <div class="agenda-item">
+            <div class="agenda-item-title"><span class="agenda-num">3.</span> Proposal</div>
+            <div class="agenda-sub">– Integrate OIP into Feature Development Lifecycle</div>
+          </div>
+        </div>
+      </div>`;
+
+    case 'status': return `
+      <div class="slide-page">
+        <div class="slide-page-header">
+          <div class="slide-page-title">Current Projects Status</div>
+          <div class="slide-section-label">Current Status</div>
+        </div>
+        <div class="card-grid">
+          <!-- YC & YFC -->
+          <div class="project-card">
+            <div class="card-header">YaraConnect & YaraFarmCare (YC & YFC)</div>
+            <div class="card-body">
+              <div class="card-section">
+                <div class="card-section-label">Last Month</div>
+                <ul class="card-bullets">
+                  <li>Successfully delivered Q1 R3 release</li>
+                  <li>Post-release bugs (medium impact) resolved within SLA</li>
+                </ul>
+              </div>
+              <div class="card-section">
+                <div class="card-section-label">In Progress</div>
+                <ul class="card-bullets">
+                  <li>Q2 R1 big items (Seller Chat, ROS TH): on track – deploying to preprod & desk check</li>
+                  <li>Resolving GitHub security alerts</li>
+                </ul>
+              </div>
+              <div class="card-section">
+                <div class="card-section-label">Next Month</div>
+                <ul class="card-bullets">
+                  <li>QA focus & deliver: Seller Chat, ROS TH</li>
+                  <li>Continue development, QA & deliver: Shop Type Mapping phase 1, small CRs</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <!-- OIP -->
+          <div class="project-card">
+            <div class="card-header">Ops Insights Portal (OIP)</div>
+            <div class="card-body">
+              <div class="card-section">
+                <div class="card-section-label">Last Month</div>
+                <ul class="card-bullets">
+                  <li>Q1 R3 delivered: Store, Dealer, Sub-dealer management coverage</li>
+                  <li>Completed design for Kafka Topic/consumer metrics monitoring</li>
+                </ul>
+              </div>
+              <div class="card-section">
+                <div class="card-section-label">In Progress</div>
+                <ul class="card-bullets">
+                  <li>Expanding Admin Portal module coverage (YC & YFC)</li>
+                </ul>
+              </div>
+              <div class="card-section">
+                <div class="card-section-label">Next Month</div>
+                <ul class="card-bullets">
+                  <li>Q2 R1: Full coverage – Store, Dealer, Sub-dealer mgmt.; deliver Kafka monitoring</li>
+                  <li>Transfer OIP backlog & enhancements to Ops team</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <!-- Farmer Services -->
+          <div class="project-card">
+            <div class="card-header">Farmer Services Epic (YC & YFC)</div>
+            <div class="card-body">
+              <div class="card-section">
+                <div class="card-section-label">Last Month</div>
+                <ul class="card-bullets">
+                  <li>Spike for Farmer Services, Sale Agronomist app completed</li>
+                </ul>
+              </div>
+              <div class="card-section">
+                <div class="card-section-label">In Progress</div>
+                <ul class="card-bullets">
+                  <li>Sale Agronomist architecture reviewed by Ram & Aneem (architect)</li>
+                  <li>Building Sale Agronomist app core base</li>
+                </ul>
+              </div>
+              <div class="card-section">
+                <div class="card-section-label">Next Month</div>
+                <ul class="card-bullets">
+                  <li>Refine & complete low-level design for Farmer Services, Farmer Segmentation</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <!-- N-Tester -->
+          <div class="project-card">
+            <div class="card-header">N-Tester | CheckIT</div>
+            <div class="card-body">
+              <div class="card-section">
+                <div class="card-section-label">Last Month</div>
+                <ul class="card-bullets">
+                  <li>Main flow development completed</li>
+                </ul>
+              </div>
+              <div class="card-section">
+                <div class="card-section-label">In Progress</div>
+                <ul class="card-bullets">
+                  <li>Testing main flow on preprod environment</li>
+                </ul>
+              </div>
+              <div class="card-section">
+                <div class="card-section-label risk">Pending / Risk</div>
+                <ul class="card-bullets">
+                  <li>Central ID for SSO login still pending – may impact expected release date</li>
+                </ul>
+              </div>
+              <div class="card-section">
+                <div class="target-date">Target Release: 17 April 2026</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+
+    case 'releases': return `
+      <div class="slide-page">
+        <div class="slide-page-header">
+          <div class="slide-page-title">Releases & Upcoming Plan</div>
+          <div class="slide-section-label">Releases</div>
+        </div>
+        <div class="release-grid">
+          <div class="release-card">
+            <div class="release-header">Released Last Month (Q1 R3)</div>
+            <div class="release-body">
+              <div class="release-group">
+                <div class="release-group-label">YC & YFC & PS</div>
+                <ul class="card-bullets">
+                  <li>Add new hierarchy to product catalogue</li>
+                  <li>[MY] YFC 2026 Launch</li>
+                  <li>Notification Centre</li>
+                  <li>Farmer Loyalty post-UAT enhancement</li>
+                </ul>
+              </div>
+              <div class="release-group">
+                <div class="release-group-label">YC Only</div>
+                <ul class="card-bullets">
+                  <li>In-app notification for ticket response (Retailer)</li>
+                  <li>Accurate points per bag on Transaction Details screen</li>
+                  <li>[TH] New address for Address Database</li>
+                  <li>[MY] Shop Set-up YC Bonus Points</li>
+                </ul>
+              </div>
+              <div class="release-group">
+                <div class="release-group-label">YFC Only</div>
+                <ul class="card-bullets">
+                  <li>Order-Level Tracking by Source</li>
+                  <li>Scan QR via LINE with Deferred Deep-Linking</li>
+                  <li>Redemptions Collection ETL performance fix</li>
+                  <li>CNP: Watermelon (IN), Muskmelon (IN)</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="release-card">
+            <div class="release-header">Planned for Next Month (Q2 R1)</div>
+            <div class="release-body">
+              <div class="release-group">
+                <div class="release-group-label">YC, YFC & PS</div>
+                <ul class="card-bullets">
+                  <li>TH ROS</li>
+                  <li>Seller Chat (TBC – pending Pen Test timeline)</li>
+                  <li>Shop Type Mapping phase 1</li>
+                  <li>Auto sync new SKU on Admin Portal</li>
+                  <li>Customer support chat enhancement</li>
+                </ul>
+              </div>
+              <div class="release-group">
+                <div class="release-group-label">YC Only</div>
+                <ul class="card-bullets">
+                  <li>Expand shop visibility for farmer service provider</li>
+                </ul>
+              </div>
+              <div class="release-group">
+                <div class="release-group-label">YFC Only</div>
+                <ul class="card-bullets">
+                  <li>CNP: Watermelon (TZ), Pomegranate (IN)</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+
+    case 'resources-1': return `
+      <div class="slide-page">
+        <div class="slide-page-header">
+          <div class="slide-page-title">ABC Resources</div>
+          <div class="slide-section-label">Resources</div>
+        </div>
+        <div class="resources-table-wrap">
+          <table class="resources-table">
+            <thead>
+              <tr><th>No.</th><th>Name</th><th>Role</th><th>Current Team</th><th>Changing</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1</td><td>Em Anh Dinh</td><td>Developer</td><td>YC</td><td class="status-blue">Transition to YFC team for Farmer Services Project</td></tr>
+              <tr><td>2</td><td>Thinh Phan</td><td>Developer</td><td>YC</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>3</td><td>Nhon Nguyen</td><td>Developer</td><td>Ops team (from YC)</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>4</td><td>Dung Pham (Andrew Pham)</td><td>Developer</td><td>YC</td><td class="status-red">Rolling off – working till mid-May</td></tr>
+              <tr><td>5</td><td>Minh Le</td><td>Developer</td><td>PS</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>6</td><td>Dat Vo</td><td>Product Owner</td><td>Product owners</td><td class="status-orange">The resource requires further discussion</td></tr>
+              <tr><td>7</td><td>Kha Huynh</td><td>Developer / Tech Lead</td><td>YFC</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>8</td><td>Huy Ngo</td><td>Developer</td><td>YFC</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>9</td><td>Nhat Nguyen</td><td>Developer</td><td>YFC</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>10</td><td>Tho Bui</td><td>Developer</td><td>YFC</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>11</td><td>Nhi Le</td><td>Developer</td><td>YFC</td><td class="status-red">Has rolled off – Last working date 31st March</td></tr>
+              <tr><td>12</td><td>Viet Nguyen</td><td>Developer</td><td>YFC</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>13</td><td>Thang Tran</td><td>Developer</td><td>YFC</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>14</td><td>Dung Nguyen</td><td>Developer</td><td>YFC (Temporal)</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>15</td><td>Tai Vo</td><td>Developer</td><td>YC (BMD)</td><td class="status-blue">Transition to YFC team for Farmer Services Project</td></tr>
+              <tr><td>16</td><td>Thien Lam</td><td>Developer</td><td>Ops team (from YFC)</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>17</td><td>Tien Anh Nguyen</td><td>Developer</td><td>YFC (BMD)</td><td class="status-blue">Onboarding to YFC team for Farmer Services Project</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>`;
+
+    case 'resources-2': return `
+      <div class="slide-page">
+        <div class="slide-page-header">
+          <div class="slide-page-title">ABC Resources</div>
+          <div class="slide-section-label">Resources</div>
+        </div>
+        <div class="resources-table-wrap">
+          <table class="resources-table">
+            <thead>
+              <tr><th>No.</th><th>Name</th><th>Role</th><th>Current Team</th><th>Changing</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>18</td><td>Khiem Nguyen</td><td>Developer</td><td>N-Tester</td><td class="status-blue">Transition to YFC team for YFC scope</td></tr>
+              <tr><td>19</td><td>Nhi Vo</td><td>Developer</td><td>N-Tester</td><td class="status-orange">Standby after N-Tester is completed</td></tr>
+              <tr><td>20</td><td>Minh Do</td><td>Developer</td><td>OIP</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>21</td><td>Bac Dinh</td><td>Developer</td><td>OIP</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>22</td><td>Han Nguyen</td><td>Developer</td><td>OIP</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>23</td><td>Suong Nguyen</td><td>Quality Engineer</td><td>YFC</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>24</td><td>Anh Nguyen</td><td>Quality Engineer</td><td>YFC</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>25</td><td>Linh Pham</td><td>Quality Engineer</td><td>YFC</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>26</td><td>Diem Nguyen</td><td>Quality Engineer</td><td>YFC (BMD)</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>27</td><td>Mai Nguyen</td><td>Quality Engineer</td><td>OIP</td><td class="status-blue">Transition to YFC team for Farmer Services Project</td></tr>
+              <tr><td>28</td><td>Thao Nguyen</td><td>Quality Engineer</td><td>N-Tester</td><td class="status-orange">Standby after N-Tester is completed</td></tr>
+              <tr><td>29</td><td>Huyen Le</td><td>Quality Engineer</td><td>OIP</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>30</td><td>Tam Mai</td><td>Scrum Master</td><td>YFC, OIP, N-Tester</td><td class="status-green">Performing as expected</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>`;
+
+    case 'proposal': return `
+      <div class="slide-page">
+        <div class="slide-page-header">
+          <div class="slide-page-title">Proposal</div>
+          <div class="slide-section-label">Proposal</div>
+        </div>
+        <div class="proposal-subtitle">Onboarding new Scrum Master for OIP Project</div>
+        <div class="proposal-box">
+          To ensure smooth coordination, maintain delivery progress, and provide continuous communication, we would like to onboard a new team member to support the OIP project as Scrum Master and point of contact (PoC).<br><br>
+          <strong>Thach Vu</strong>, who has 4 years of experience, with a background as a QA Engineer and experience working in a Scrum Master role.<br><br>
+          During the initial onboarding period, Thach will be closely supported by <strong>Tam Mai</strong> to ensure a smooth transition and proper knowledge transfer.
+        </div>
+      </div>`;
+
+    case 'closing': return `
+      <div class="slide-closing">
+        <div class="closing-content">
+          <div class="closing-thanks">Thank You</div>
+          <div class="closing-sub">We appreciate your time and attention.</div>
+          <div class="closing-italic">Open for questions and discussion.</div>
+          <div class="closing-footer">DVCS – ABC | Apr 2026</div>
+        </div>
+      </div>`;
+
+    default: return '<div class="slide-page"><p>Slide content not available.</p></div>';
+  }
+}
+
+// ── VIEWER LOGIC ──
+let currentSlides = [];
+let currentSlideIndex = 0;
+
+function openViewer(year, month) {
+  const report = reports[year][month];
+  currentSlides = report.slides;
+  currentSlideIndex = 0;
+
+  document.getElementById('viewer-title').innerHTML = `${report.title} <span>| ${report.date}</span>`;
+
+  // Build nav
+  const nav = document.getElementById('slide-nav');
+  nav.innerHTML = '';
+  currentSlides.forEach((s, i) => {
+    const item = document.createElement('div');
+    item.className = `slide-nav-item ${i === 0 ? 'active' : ''}`;
+    item.innerHTML = `<span class="slide-nav-num">${i + 1}</span>${s.name}`;
+    item.addEventListener('click', () => goToSlide(i));
+    nav.appendChild(item);
+  });
+
+  // Build slides
+  const content = document.getElementById('slide-content');
+  content.innerHTML = '';
+  currentSlides.forEach((s, i) => {
+    const div = document.createElement('div');
+    div.className = `slide ${i === 0 ? 'active' : ''}`;
+    div.innerHTML = getSlideHTML(s.type);
+    content.appendChild(div);
+  });
+
+  updateNav();
+  document.getElementById('overlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeViewer() {
+  document.getElementById('overlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function goToSlide(index) {
+  if (index < 0 || index >= currentSlides.length) return;
+  currentSlideIndex = index;
+
+  // Update slides
+  document.querySelectorAll('#slide-content .slide').forEach((s, i) => {
+    s.classList.toggle('active', i === index);
+  });
+
+  // Update nav
+  document.querySelectorAll('.slide-nav-item').forEach((item, i) => {
+    item.classList.toggle('active', i === index);
+  });
+
+  // Scroll nav item into view
+  const activeNavItem = document.querySelectorAll('.slide-nav-item')[index];
+  if (activeNavItem) activeNavItem.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+
+  // Scroll content to top
+  document.getElementById('slide-content').scrollTop = 0;
+
+  updateNav();
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = currentSlideIndex === 0;
+  document.getElementById('btn-next').disabled = currentSlideIndex === currentSlides.length - 1;
+  document.getElementById('slide-counter').textContent = `${currentSlideIndex + 1} / ${currentSlides.length}`;
+}
+
+// ── EVENT LISTENERS ──
+document.getElementById('btn-close').addEventListener('click', closeViewer);
+document.getElementById('btn-prev').addEventListener('click', () => goToSlide(currentSlideIndex - 1));
+document.getElementById('btn-next').addEventListener('click', () => goToSlide(currentSlideIndex + 1));
+
+// Toggle slide nav
+document.getElementById('btn-toggle-nav').addEventListener('click', () => {
+  const nav = document.getElementById('slide-nav');
+  const btn = document.getElementById('btn-toggle-nav');
+  nav.classList.toggle('collapsed');
+  btn.classList.toggle('collapsed');
+});
+
+document.getElementById('overlay').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('overlay')) closeViewer();
+});
+
+document.addEventListener('keydown', (e) => {
+  if (!document.getElementById('overlay').classList.contains('active')) return;
+  if (e.key === 'Escape') closeViewer();
+  if (e.key === 'ArrowLeft') goToSlide(currentSlideIndex - 1);
+  if (e.key === 'ArrowRight') goToSlide(currentSlideIndex + 1);
+});
+
+// ── INIT ──
+renderGrids();
+</script>
+</body>
+</html>
