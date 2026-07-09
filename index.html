@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DVCS – ABC | July 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0a1628;
+    --navy-light: #132240;
+    --navy-mid: #1a3160;
+    --blue: #2563eb;
+    --blue-light: #3b82f6;
+    --blue-accent: #60a5fa;
+    --blue-pale: #dbeafe;
+    --blue-wash: #eff6ff;
+    --white: #ffffff;
+    --gray-50: #f8fafc;
+    --gray-100: #f1f5f9;
+    --gray-200: #e2e8f0;
+    --gray-300: #cbd5e1;
+    --gray-400: #94a3b8;
+    --gray-500: #64748b;
+    --gray-600: #475569;
+    --gray-700: #334155;
+    --gray-800: #1e293b;
+    --green: #16a34a;
+    --red: #dc2626;
+    --orange: #d97706;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'Space Mono', monospace;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow-sm: 0 1px 3px rgba(10,22,40,0.06);
+    --shadow-md: 0 4px 16px rgba(10,22,40,0.08);
+    --shadow-lg: 0 8px 32px rgba(10,22,40,0.12);
+    --shadow-xl: 0 16px 48px rgba(10,22,40,0.16);
+    --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: var(--font-body); background: var(--gray-50); color: var(--gray-800); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+  .site-header { background: var(--navy); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .header-inner { max-width: 1280px; margin: 0 auto; padding: 0 40px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
+  .header-brand { display: flex; align-items: center; gap: 14px; }
+  .header-logo { width: 36px; height: 36px; background: var(--blue); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; font-size: 14px; letter-spacing: -0.5px; }
+  .header-title { color: white; font-size: 16px; font-weight: 600; letter-spacing: -0.3px; }
+  .header-title span { color: var(--gray-400); font-weight: 400; margin: 0 6px; }
+  .header-subtitle { color: var(--gray-400); font-size: 13px; font-weight: 400; }
+
+  .viewer { width: 100vw; height: calc(100vh - 64px); background: var(--white); display: flex; flex-direction: column; overflow: hidden; }
+  .viewer-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; border-bottom: 1px solid var(--gray-200); background: var(--gray-50); flex-shrink: 0; }
+  .viewer-title { font-size: 15px; font-weight: 600; color: var(--navy); }
+  .viewer-title span { color: var(--gray-400); font-weight: 400; }
+  .back-btn { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border: 1px solid var(--gray-200); background: white; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; color: var(--gray-600); cursor: pointer; transition: all var(--transition); font-family: var(--font-body); text-decoration: none; }
+  .back-btn:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-wash); }
+  .viewer-body { flex: 1; display: flex; overflow: hidden; }
+  .slide-nav { width: 220px; border-right: 1px solid var(--gray-200); background: var(--gray-50); overflow-y: auto; flex-shrink: 0; padding: 12px; transition: width var(--transition), padding var(--transition), opacity var(--transition); }
+  .slide-nav.collapsed { width: 0; padding: 12px 0; overflow: hidden; border-right: none; opacity: 0; }
+  .nav-toggle { width: 36px; height: 36px; border: 1px solid var(--gray-200); background: white; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--gray-500); transition: all var(--transition); flex-shrink: 0; margin-right: 10px; }
+  .nav-toggle:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-wash); }
+  .nav-toggle svg { width: 18px; height: 18px; transition: transform var(--transition); }
+  .nav-toggle.collapsed svg { transform: rotate(180deg); }
+  .slide-nav-item { padding: 10px 14px; border-radius: var(--radius-sm); cursor: pointer; transition: all var(--transition); margin-bottom: 2px; font-size: 13px; color: var(--gray-600); font-weight: 500; display: flex; align-items: center; gap: 10px; }
+  .slide-nav-item:hover { background: var(--gray-100); color: var(--gray-800); }
+  .slide-nav-item.active { background: var(--blue); color: white; }
+  .slide-nav-num { font-family: var(--font-mono); font-size: 10px; font-weight: 700; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; border-radius: 6px; background: rgba(0,0,0,0.06); flex-shrink: 0; }
+  .slide-nav-item.active .slide-nav-num { background: rgba(255,255,255,0.2); }
+  .slide-content { flex: 1; overflow-y: auto; padding: 0; }
+  .slide { display: none; min-height: 100%; }
+  .slide.active { display: block; }
+
+  .slide-title-agenda { display: flex; min-height: calc(100vh - 64px - 65px - 49px); }
+  .title-left { width: 42%; background: var(--navy); padding: 60px 40px; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; }
+  .title-left::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--blue); }
+  .title-left::after { content: ''; position: absolute; bottom: -80px; right: -80px; width: 250px; height: 250px; background: radial-gradient(circle, rgba(37,99,235,0.15) 0%, transparent 70%); }
+  .title-main { font-size: 36px; font-weight: 700; color: white; letter-spacing: -1px; line-height: 1.15; margin-bottom: 12px; }
+  .title-date { font-size: 20px; color: var(--gray-400); font-weight: 400; }
+  .title-right { width: 58%; padding: 60px 48px; display: flex; flex-direction: column; justify-content: center; }
+  .agenda-heading { font-size: 28px; font-weight: 700; color: var(--navy); margin-bottom: 28px; letter-spacing: -0.5px; }
+  .agenda-item { margin-bottom: 20px; }
+  .agenda-item-title { display: flex; align-items: baseline; gap: 10px; font-size: 15px; font-weight: 600; color: var(--gray-800); margin-bottom: 4px; }
+  .agenda-num { font-family: var(--font-mono); font-size: 13px; font-weight: 700; color: var(--blue); min-width: 20px; }
+  .agenda-sub { padding-left: 30px; font-size: 13px; color: var(--gray-500); line-height: 1.7; }
+
+  .slide-page { padding: 40px 44px; }
+  .slide-page-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 28px; position: relative; padding-bottom: 16px; }
+  .slide-page-header::after { content: ''; position: absolute; bottom: 0; left: 0; width: 48px; height: 3px; background: var(--blue); border-radius: 2px; }
+  .slide-page-title { font-size: 24px; font-weight: 700; color: var(--navy); letter-spacing: -0.5px; }
+  .slide-section-label { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--gray-400); }
+
+  .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .project-card { border: 1px solid var(--gray-200); border-radius: var(--radius); overflow: hidden; background: white; }
+  .card-header { background: var(--navy); padding: 12px 18px; font-size: 13px; font-weight: 600; color: white; letter-spacing: -0.2px; }
+  .card-body { padding: 18px; }
+  .card-section { margin-bottom: 14px; }
+  .card-section:last-child { margin-bottom: 0; }
+  .card-section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--blue); margin-bottom: 6px; }
+  .card-section-label.risk { color: var(--orange); }
+  .card-section-label.target { color: var(--blue); }
+  .card-bullets { list-style: none; padding: 0; }
+  .card-bullets li { font-size: 12.5px; color: var(--gray-700); line-height: 1.55; padding-left: 14px; position: relative; margin-bottom: 4px; }
+  .card-bullets li::before { content: ''; position: absolute; left: 0; top: 7px; width: 4px; height: 4px; background: var(--blue-light); border-radius: 50%; }
+  .card-bullets ul { list-style: none; padding-left: 16px; margin-top: 4px; }
+  .card-bullets ul li { font-size: 12px; color: var(--gray-600); }
+  .card-bullets ul li::before { background: var(--gray-400); width: 3px; height: 3px; top: 8px; }
+  .target-date { font-size: 12.5px; font-weight: 600; color: var(--blue); }
+
+  .release-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .release-card { border: 1px solid var(--gray-200); border-radius: var(--radius); overflow: hidden; background: white; }
+  .release-header { background: var(--navy); padding: 12px 18px; font-size: 13px; font-weight: 600; color: white; }
+  .release-body { padding: 18px; }
+  .release-group { margin-bottom: 16px; }
+  .release-group:last-child { margin-bottom: 0; }
+  .release-group-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--blue); margin-bottom: 6px; }
+  .release-body .card-bullets li::before { background: var(--gray-400); }
+
+  .resources-table-wrap { overflow-x: auto; }
+  .resources-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 12.5px; border: 1px solid var(--gray-200); border-radius: var(--radius); overflow: hidden; }
+  .resources-table thead th { background: var(--navy); color: white; padding: 11px 14px; text-align: left; font-weight: 600; font-size: 12px; letter-spacing: 0.3px; white-space: nowrap; border: none; }
+  .resources-table thead th:first-child { width: 44px; text-align: center; }
+  .resources-table tbody td { padding: 9px 14px; border-bottom: 1px solid var(--gray-100); color: var(--gray-700); vertical-align: top; }
+  .resources-table tbody td:first-child { text-align: center; color: var(--gray-400); font-family: var(--font-mono); font-size: 11px; }
+  .resources-table tbody tr:nth-child(even) td { background: var(--gray-50); }
+  .resources-table tbody tr:last-child td { border-bottom: none; }
+  .status-green { color: var(--green); font-weight: 500; }
+  .status-blue { color: var(--blue); font-weight: 500; }
+  .status-red { color: var(--red); font-weight: 600; }
+  .status-orange { color: var(--orange); font-weight: 500; }
+
+  .proposal-subtitle { font-size: 16px; color: var(--blue); font-weight: 500; margin-bottom: 20px; }
+  .proposal-box { background: var(--blue-wash); border: 1px solid var(--blue-pale); border-radius: var(--radius); padding: 24px 28px; font-size: 13.5px; line-height: 1.7; color: var(--gray-700); margin-bottom: 14px; }
+  .proposal-box:last-child { margin-bottom: 0; }
+  .proposal-box strong { color: var(--gray-800); }
+  .proposal-box h4 { font-size: 13px; font-weight: 700; color: var(--navy); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+  .proposal-box ul { list-style: none; padding-left: 0; margin-top: 6px; }
+  .proposal-box ul li { position: relative; padding-left: 16px; margin-bottom: 4px; }
+  .proposal-box ul li::before { content: ''; position: absolute; left: 0; top: 9px; width: 4px; height: 4px; background: var(--blue-light); border-radius: 50%; }
+
+  .slide-closing { min-height: calc(100vh - 64px - 65px - 49px); background: var(--navy); display: flex; align-items: center; justify-content: center; text-align: center; padding: 60px; position: relative; overflow: hidden; }
+  .slide-closing::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--blue); }
+  .slide-closing::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 500px; height: 500px; background: radial-gradient(circle, rgba(37,99,235,0.1) 0%, transparent 70%); pointer-events: none; }
+  .closing-content { position: relative; z-index: 1; }
+  .closing-thanks { font-size: 48px; font-weight: 700; color: white; letter-spacing: -1.5px; margin-bottom: 12px; }
+  .closing-sub { font-size: 16px; color: var(--gray-400); margin-bottom: 8px; }
+  .closing-italic { font-size: 15px; color: var(--gray-500); font-style: italic; margin-bottom: 32px; }
+  .closing-footer { font-family: var(--font-mono); font-size: 11px; color: var(--gray-500); letter-spacing: 1px; text-transform: uppercase; }
+
+  .viewer-footer { display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; border-top: 1px solid var(--gray-200); background: var(--gray-50); flex-shrink: 0; }
+  .nav-btn { display: inline-flex; align-items: center; gap: 8px; padding: 8px 18px; border: 1px solid var(--gray-200); background: white; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; color: var(--gray-600); cursor: pointer; transition: all var(--transition); font-family: var(--font-body); }
+  .nav-btn:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-wash); }
+  .nav-btn:disabled { opacity: 0.35; cursor: default; }
+  .nav-btn:disabled:hover { border-color: var(--gray-200); color: var(--gray-600); background: white; }
+  .slide-counter { font-family: var(--font-mono); font-size: 12px; color: var(--gray-400); }
+
+  @media (max-width: 768px) {
+    .header-inner { padding: 0 20px; }
+    .slide-nav { width: 180px; }
+    .slide-title-agenda { flex-direction: column; }
+    .title-left, .title-right { width: 100%; }
+    .card-grid, .release-grid { grid-template-columns: 1fr; }
+    .slide-page { padding: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-brand">
+      <div class="header-logo">AB</div>
+      <div>
+        <div class="header-title">DVCS <span>×</span> ABC</div>
+      </div>
+    </div>
+    <div class="header-subtitle">Monthly Reports Portal</div>
+  </div>
+</header>
+
+<div class="viewer">
+  <div class="viewer-header">
+    <div style="display:flex;align-items:center;">
+      <button class="nav-toggle" id="btn-toggle-nav" title="Toggle slide navigation">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+      </button>
+      <div class="viewer-title">DVCS – ABC <span>| July 2026</span></div>
+    </div>
+    <a href="dvcs-abc-report.html" class="back-btn">← Back to portal</a>
+  </div>
+  <div class="viewer-body">
+    <nav class="slide-nav" id="slide-nav"></nav>
+    <div class="slide-content" id="slide-content"></div>
+  </div>
+  <div class="viewer-footer">
+    <button class="nav-btn" id="btn-prev">← Previous</button>
+    <span class="slide-counter" id="slide-counter">1 / 1</span>
+    <button class="nav-btn" id="btn-next">Next →</button>
+  </div>
+</div>
+
+<script>
+const slides = [
+  { name: 'Title & Agenda', type: 'title-agenda' },
+  { name: 'Current Status', type: 'status' },
+  { name: 'Releases', type: 'releases' },
+  { name: 'Resources (1/2)', type: 'resources-1' },
+  { name: 'Resources (2/2)', type: 'resources-2' },
+  { name: 'Proposal', type: 'proposal' },
+  { name: 'Closing', type: 'closing' }
+];
+
+function getSlideHTML(type) {
+  switch(type) {
+    case 'title-agenda': return `
+      <div class="slide-title-agenda">
+        <div class="title-left">
+          <div class="title-main">DVCS – ABC</div>
+          <div class="title-date">July 2026</div>
+        </div>
+        <div class="title-right">
+          <div class="agenda-heading">Agenda</div>
+          <div class="agenda-item">
+            <div class="agenda-item-title"><span class="agenda-num">1.</span> Projects</div>
+            <div class="agenda-sub">– Current Status Overview<br>– Scope in Progress</div>
+          </div>
+          <div class="agenda-item">
+            <div class="agenda-item-title"><span class="agenda-num">2.</span> Releases</div>
+            <div class="agenda-sub">– Released Last Month<br>– Planned for Next Month</div>
+          </div>
+          <div class="agenda-item">
+            <div class="agenda-item-title"><span class="agenda-num">3.</span> Proposal</div>
+            <div class="agenda-sub">– ABC resource update &amp; propose new resource for YC<br>– OIP Phase 3 kick-off</div>
+          </div>
+        </div>
+      </div>`;
+
+    case 'status': return `
+      <div class="slide-page">
+        <div class="slide-page-header">
+          <div class="slide-page-title">Current Projects Status</div>
+          <div class="slide-section-label">Current Status</div>
+        </div>
+        <div class="card-grid">
+          <!-- YC & YFC -->
+          <div class="project-card">
+            <div class="card-header">YaraConnect & YaraFarmCare (YC & YFC)</div>
+            <div class="card-body">
+              <div class="card-section">
+                <div class="card-section-label">Last 2 Months</div>
+                <ul class="card-bullets">
+                  <li>Delivered Q2 R2 and Q2 R3 releases</li>
+                  <li>Q2 R2 post-release bug (DB transaction leak): reported by Ops on June 25, fix released on June 26</li>
+                  <li>Q2 R3 post-release bug (username validation): found and fixed on July 6</li>
+                </ul>
+              </div>
+              <div class="card-section">
+                <div class="card-section-label">Aug 6 Release Focus</div>
+                <ul class="card-bullets">
+                  <li>Farmer Services</li>
+                  <li>AI Chat rollout to all farmers</li>
+                  <li>Other medium and small CRs</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <!-- OIP -->
+          <div class="project-card">
+            <div class="card-header">Ops Insights Portal (OIP)</div>
+            <div class="card-body">
+              <div class="card-section">
+                <div class="card-section-label">Last Month</div>
+                <ul class="card-bullets">
+                  <li>Continued delivery of Phase 2 scope: monitor Cron Job for PMQA report (Thailand &amp; Malaysia); tracking update for B2B and B2C flow</li>
+                </ul>
+              </div>
+              <div class="card-section">
+                <div class="card-section-label">In Progress</div>
+                <ul class="card-bullets">
+                  <li>Wrap up Phase 2: complete and release spillover items</li>
+                  <li>Kick off Phase 3: OIP supports Ops team to monitor OIP and report incidents
+                    <ul>
+                      <li>Align way of working between OIP team and Ops team, with Sujatha's involvement to align the process across stakeholders</li>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
+              <div class="card-section">
+                <div class="card-section-label">Next Month</div>
+                <ul class="card-bullets">
+                  <li>Achieve medium-to-good effectiveness in monitoring / supporting Ops debugging</li>
+                  <li>Refine OIP (if needed) for more accurate incident detection</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <!-- Farmer Services -->
+          <div class="project-card">
+            <div class="card-header">Farmer Services Epic (YC & YFC)</div>
+            <div class="card-body">
+              <div class="card-section">
+                <div class="card-section-label">Last Month</div>
+                <ul class="card-bullets">
+                  <li>Development and QA completed for ~70% of scope</li>
+                  <li>Completed 2 of 3 UAT sessions across 3 platforms: Admin Portal, YFC app, YFF app</li>
+                </ul>
+              </div>
+              <div class="card-section">
+                <div class="card-section-label">In Progress</div>
+                <ul class="card-bullets">
+                  <li>Developing priority CRs for Aug 6 release and remaining medium / low-priority scope</li>
+                </ul>
+              </div>
+              <div class="card-section">
+                <div class="card-section-label">Next Month</div>
+                <ul class="card-bullets">
+                  <li>Release the feature</li>
+                  <li>Support training month</li>
+                  <li>Hypercare period</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <!-- N-Tester -->
+          <div class="project-card">
+            <div class="card-header">N-Tester | CheckIT</div>
+            <div class="card-body">
+              <div class="card-section">
+                <div class="card-section-label">Last 2 Months</div>
+                <ul class="card-bullets">
+                  <li>Delivered NutriCheck feature for Australia and New Zealand</li>
+                </ul>
+              </div>
+              <div class="card-section">
+                <div class="card-section-label">In Progress</div>
+                <ul class="card-bullets">
+                  <li>Participating in testing of N-Tester device V4 Beta</li>
+                </ul>
+              </div>
+              <div class="card-section">
+                <div class="card-section-label">Next Month</div>
+                <ul class="card-bullets">
+                  <li>Proposal: develop Update Firmware feature in N-Tester app</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <!-- YFC Botswana -->
+          <div class="project-card">
+            <div class="card-header">YFC Botswana</div>
+            <div class="card-body">
+              <div class="card-section">
+                <div class="card-section-label">In Progress</div>
+                <ul class="card-bullets">
+                  <li>Working with Vishal to clarify scope and next steps</li>
+                  <li>Revised effort estimate and timeline will be sent for approval before proceeding</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <!-- AI SDLC -->
+          <div class="project-card">
+            <div class="card-header">AI SDLC</div>
+            <div class="card-body">
+              <div class="card-section">
+                <div class="card-section-label">Update</div>
+                <ul class="card-bullets">
+                  <li><em>Update from Khanh Mai</em></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+
+    case 'releases': return `
+      <div class="slide-page">
+        <div class="slide-page-header">
+          <div class="slide-page-title">Releases & Upcoming Plan</div>
+          <div class="slide-section-label">Releases</div>
+        </div>
+        <div class="release-grid">
+          <div class="release-card">
+            <div class="release-header">Last Released (Q2 R3 – July)</div>
+            <div class="release-body">
+              <div class="release-group">
+                <div class="release-group-label">Intake & High-Level Scope</div>
+                <ul class="card-bullets">
+                  <li>INTAKE | DGLP-18659 – [AP | YC][IN] Campaign Manager Enhancement (B2B)</li>
+                  <li>CR | DGLP-22782 – [YC][ALL] Phase 1: Assisted Order Flow Enhancement</li>
+                </ul>
+              </div>
+              <div class="release-group">
+                <div class="release-group-label">Change Request / BAU</div>
+                <ul class="card-bullets">
+                  <li>DGLP-21886 – [YC][ALL] Enable push notifications when a shop is approved / rejected</li>
+                  <li>DGLP-18201 – Fix incorrect population of product_item_price column in DB</li>
+                  <li>DGLP-16396 – [YC][VN] Allow user to search SKU / Material ID in AP Products search bar</li>
+                  <li>DGLP-17685 – [YC | AP][PH] Master Data correction</li>
+                  <li>DGLP-17689 – [FC][DATA][ID] Duplicate broccoli data reconciliation and UI correction</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="release-card">
+            <div class="release-header">Planned for Next Month (Q3 R1 – Aug 6)</div>
+            <div class="release-body">
+              <div class="release-group">
+                <div class="release-group-label">Intake & High-Level Scope</div>
+                <ul class="card-bullets">
+                  <li>DGLP-17777 – [FC][ALL] Segment-based offerings to farmers based on met criteria
+                    <ul>
+                      <li>DGLP-23964 – [CR][AP] Soft lock segment deactivation when segment is in use by live campaign or discount</li>
+                      <li>DGLP-25437 – [CR][AP] Farmer Segmentation – allow successful upload of file downloaded from U360</li>
+                    </ul>
+                  </li>
+                  <li>DGLP-20361 – [AP][ALL] Service Catalogue
+                    <ul>
+                      <li>DGLP-25138 – [AP | FS][ID] Post-desk-check enhancements</li>
+                      <li>DGLP-25313 – [FC][ID] DPY 2.0: pricing and sampling for free services</li>
+                      <li>DGLP-24989 – [YFC] Legal advice on FS T&amp;C</li>
+                    </ul>
+                  </li>
+                  <li>DGLP-20359 – [FC][ID] Sales Agronomist Persona</li>
+                  <li>DGLP-898 – [FC][ID] DokterPupuk: Book Yara Visit</li>
+                </ul>
+              </div>
+              <div class="release-group">
+                <div class="release-group-label">Change Requests</div>
+                <ul class="card-bullets">
+                  <li>DGLP-23663 – [AP][TH] Separate cancelled-order notifications from order notifications</li>
+                  <li>DGLP-21949 – [AP][TH] Show both active and inactive products in list view</li>
+                  <li>DGLP-25615 – [AP | FC][ID] Add new event tracker: AgriBot</li>
+                  <li>DGLP-17053 – [AP][TH] Standardise data points: Purchase Transaction History</li>
+                  <li>DGLP-22528 – [VN][YC] Change permission of User Role / Shop Representative to check receipts in AP</li>
+                  <li>DGLP-23661 – [AP][TH] Increase rows per page in AP to 100 rows</li>
+                  <li>DGLP-23858 – [YFC][ID] Enable AI AgriBot to Farmer</li>
+                </ul>
+              </div>
+              <div class="release-group">
+                <div class="release-group-label">CNP</div>
+                <ul class="card-bullets">
+                  <li>DGLP-25409 – [FC][IN] CNP 2026 June: Tomato</li>
+                  <li>DGLP-25412 – [FC][IN] CNP 2026 June: Small Onion</li>
+                  <li>DGLP-25403 – [FC][TZ] CNP 2026 June: Sugarcane</li>
+                  <li>DGLP-25185 – [FC][TZ] CNP 2026 June: Barley</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+
+    case 'resources-1': return `
+      <div class="slide-page">
+        <div class="slide-page-header">
+          <div class="slide-page-title">ABC Resources</div>
+          <div class="slide-section-label">Resources</div>
+        </div>
+        <div class="resources-table-wrap">
+          <table class="resources-table">
+            <thead>
+              <tr><th>No.</th><th>Name</th><th>Role</th><th>Current Team</th><th>Changing</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1</td><td>Em Anh Dinh</td><td>Developer</td><td>YFC</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>2</td><td>Thinh Phan</td><td>Developer</td><td>YC</td><td class="status-red">Rolling off from 1 Aug</td></tr>
+              <tr><td>3</td><td>Nhon Nguyen</td><td>Developer</td><td>Ops team (from YC)</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>4</td><td>Dung Pham (Andrew Pham)</td><td>Developer</td><td>YC</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>5</td><td>Tuan Vu</td><td>Developer</td><td>YC</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>6</td><td>Minh Le</td><td>Developer</td><td>PS</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>7</td><td>Dat Vo</td><td>Product Owner</td><td>Product owners</td><td class="status-red">Rolled off</td></tr>
+              <tr><td>8</td><td>Kha Huynh</td><td>Developer / Tech Lead</td><td>YFC</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>9</td><td>Huy Ngo</td><td>Developer</td><td>YFC</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>10</td><td>Nhat Nguyen</td><td>Developer</td><td>YFC</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>11</td><td>Tho Bui</td><td>Developer</td><td>YFC</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>12</td><td>Viet Nguyen</td><td>Developer</td><td>YFC</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>13</td><td>Thang Tran</td><td>Developer</td><td>YFC</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>14</td><td>Dung Nguyen</td><td>Developer</td><td>YFC (Temporal)</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>15</td><td>Tai Vo</td><td>Developer</td><td>YFC</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>16</td><td>Thien Lam</td><td>Developer</td><td>Ops team (from YFC)</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>17</td><td>Tien Anh Nguyen</td><td>Developer</td><td>YFC (BMD)</td><td class="status-red">Rolled off from 1 July</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>`;
+
+    case 'resources-2': return `
+      <div class="slide-page">
+        <div class="slide-page-header">
+          <div class="slide-page-title">ABC Resources</div>
+          <div class="slide-section-label">Resources</div>
+        </div>
+        <div class="resources-table-wrap">
+          <table class="resources-table">
+            <thead>
+              <tr><th>No.</th><th>Name</th><th>Role</th><th>Current Team</th><th>Changing</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>18</td><td>Khiem Nguyen</td><td>Developer</td><td>YFC-Botswana</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>19</td><td>Nhi Vo</td><td>Developer</td><td>N-Tester</td><td class="status-red">Rolled off from 1 June</td></tr>
+              <tr><td>20</td><td>Minh Do</td><td>Developer</td><td>OIP</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>21</td><td>Bac Dinh</td><td>Developer</td><td>OIP</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>22</td><td>Han Nguyen</td><td>Developer</td><td>OIP</td><td class="status-blue">Proposed to move to BMD</td></tr>
+              <tr><td>23</td><td>Suong Nguyen</td><td>Quality Engineer</td><td>YFC</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>24</td><td>Anh Nguyen</td><td>Quality Engineer</td><td>YFC</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>25</td><td>Linh Pham</td><td>Quality Engineer</td><td>YFC</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>26</td><td>Diem Nguyen</td><td>Quality Engineer</td><td>YFC-Botswana</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>27</td><td>Mai Nguyen</td><td>Quality Engineer</td><td>YFC</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>28</td><td>Thao Nguyen</td><td>Quality Engineer</td><td>YFC-Botswana</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>29</td><td>Huyen Le</td><td>Quality Engineer</td><td>OIP</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>30</td><td>Tam Mai</td><td>Scrum Master</td><td>YFC, OIP, N-Tester</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>31</td><td>Quynh Pham</td><td>Developer</td><td>YFC-Botswana</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>32</td><td>Son Nguyen</td><td>Developer</td><td>YFC-Botswana</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>33</td><td>Thach Vu</td><td>Scrum Master</td><td>OIP</td><td class="status-green">Performing as expected</td></tr>
+              <tr><td>34</td><td>Thuan Tran</td><td>Developer</td><td>YC</td><td class="status-blue">Proposed as YC new developer (replacement for Thinh Phan)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>`;
+
+    case 'proposal': return `
+      <div class="slide-page">
+        <div class="slide-page-header">
+          <div class="slide-page-title">Proposal</div>
+          <div class="slide-section-label">Proposal</div>
+        </div>
+        <div class="proposal-subtitle">Resource updates, N-Tester scope, and YFC Botswana</div>
+        <div class="proposal-box">
+          <h4>Resource Update</h4>
+          To backfill rolled-off resources and sustain delivery capacity:
+          <ul>
+            <li>Onboard <strong>Han Nguyen</strong> to BMD as replacement for two rolled-off BMD resources.</li>
+            <li>Onboard <strong>Thuan Tran</strong> to YC Development as replacement for <strong>Thinh Phan</strong>.</li>
+          </ul>
+        </div>
+        <div class="proposal-box">
+          <h4>N-Tester Project</h4>
+          Propose to design and deliver the <strong>Update Firmware</strong> feature in the N-Tester app.
+        </div>
+        <div class="proposal-box">
+          <h4>YFC Botswana</h4>
+          Detailed proposal will be shared once scope is aligned with <strong>Vishal</strong>. Revised effort estimate and timeline will follow before proceeding.
+        </div>
+      </div>`;
+
+    case 'closing': return `
+      <div class="slide-closing">
+        <div class="closing-content">
+          <div class="closing-thanks">Thank You</div>
+          <div class="closing-sub">We appreciate your time and attention.</div>
+          <div class="closing-italic">Open for questions and discussion.</div>
+          <div class="closing-footer">DVCS – ABC | Jul 2026</div>
+        </div>
+      </div>`;
+
+    default: return '<div class="slide-page"><p>Slide content not available.</p></div>';
+  }
+}
+
+let currentSlideIndex = 0;
+
+function renderDeck() {
+  const nav = document.getElementById('slide-nav');
+  const content = document.getElementById('slide-content');
+  nav.innerHTML = '';
+  content.innerHTML = '';
+  slides.forEach((s, i) => {
+    const item = document.createElement('div');
+    item.className = `slide-nav-item ${i === 0 ? 'active' : ''}`;
+    item.innerHTML = `<span class="slide-nav-num">${i + 1}</span>${s.name}`;
+    item.addEventListener('click', () => goToSlide(i));
+    nav.appendChild(item);
+
+    const div = document.createElement('div');
+    div.className = `slide ${i === 0 ? 'active' : ''}`;
+    div.innerHTML = getSlideHTML(s.type);
+    content.appendChild(div);
+  });
+  updateNav();
+}
+
+function goToSlide(index) {
+  if (index < 0 || index >= slides.length) return;
+  currentSlideIndex = index;
+  document.querySelectorAll('#slide-content .slide').forEach((s, i) => s.classList.toggle('active', i === index));
+  document.querySelectorAll('.slide-nav-item').forEach((item, i) => item.classList.toggle('active', i === index));
+  const activeNavItem = document.querySelectorAll('.slide-nav-item')[index];
+  if (activeNavItem) activeNavItem.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  document.getElementById('slide-content').scrollTop = 0;
+  updateNav();
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = currentSlideIndex === 0;
+  document.getElementById('btn-next').disabled = currentSlideIndex === slides.length - 1;
+  document.getElementById('slide-counter').textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+}
+
+document.getElementById('btn-prev').addEventListener('click', () => goToSlide(currentSlideIndex - 1));
+document.getElementById('btn-next').addEventListener('click', () => goToSlide(currentSlideIndex + 1));
+document.getElementById('btn-toggle-nav').addEventListener('click', () => {
+  document.getElementById('slide-nav').classList.toggle('collapsed');
+  document.getElementById('btn-toggle-nav').classList.toggle('collapsed');
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowLeft') goToSlide(currentSlideIndex - 1);
+  if (e.key === 'ArrowRight') goToSlide(currentSlideIndex + 1);
+});
+
+renderDeck();
+</script>
+</body>
+</html>
